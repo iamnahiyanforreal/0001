@@ -58,7 +58,7 @@
 </audio>
 
 <div id="step1">
-    <img src="intro.jpg" alt="Intro">
+    <img src="intro.jpg">
     <h1>Heyy 👀</h1>
     <h2>Your new boyfriend has something to tell you...</h2>
     <button onclick="startSequence()">Continue</button>
@@ -71,13 +71,13 @@
 </div>
 
 <div id="angry" class="hidden">
-    <img src="angrycat.jpg" alt="Angry Cat">
+    <img src="angrycat.jpg">
     <h3>Excuse me??? Click YES right now 😾</h3>
     <button onclick="showRose()">Okay okay 😅</button>
 </div>
 
 <div id="rose" class="hidden">
-    <img src="heyrosecat.jpg" alt="Rose Cat">
+    <img src="heyrosecat.jpg">
     <h1>Hey Rose 🌹</h1>
     <button onclick="showGallery()">Continue...</button>
 </div>
@@ -103,7 +103,7 @@
 </div>
 
 <div id="serious" class="hidden">
-    <img src="seriouscat.jpg" alt="Serious Cat">
+    <img src="seriouscat.jpg">
     <h2>I wanna ask you something very serious 💖</h2>
     <button onclick="valentineAsk()">Continue...</button>
 </div>
@@ -167,12 +167,16 @@ const m1 = document.getElementById("music1");
 const m2 = document.getElementById("music2");
 const m3 = document.getElementById("music3");
 
-function playMusic(target) {
+function stopAllMusic() {
     [m1, m2, m3].forEach(m => {
         m.pause();
         m.currentTime = 0;
     });
-    target.play().catch(e => console.log("Music play blocked or file not found:", e));
+}
+
+function playMusic(target) {
+    stopAllMusic();
+    target.play().catch(e => console.log("Playback error:", e));
 }
 
 function hideAll() {
@@ -183,7 +187,7 @@ function hideAll() {
 function startSequence() { 
     hideAll(); 
     document.getElementById("step2").classList.remove("hidden"); 
-    playMusic(m1); 
+    playMusic(m1); // Start main theme
 }
 
 function angryCat() { hideAll(); document.getElementById("angry").classList.remove("hidden"); }
@@ -201,9 +205,10 @@ function noFinal() {
 
     if (noCount === 1) { 
         document.getElementById("no1").classList.remove("hidden"); 
-        playMusic(m2); 
+        playMusic(m2); // Music 2 ONLY plays here
     } else if (noCount === 2) { 
         document.getElementById("messi").classList.remove("hidden"); 
+        // We don't call playMusic here, so Music 2 naturally stops or stays silent
     } else { 
         document.getElementById("no3").classList.remove("hidden"); 
     }
@@ -211,6 +216,11 @@ function noFinal() {
 
 function smirkYes() {
     yesCount++;
+    // If we were on the 'no1' page, we should restart the main music (m1)
+    if(noCount === 1 && yesCount === 1) {
+        playMusic(m1);
+    }
+
     if (yesCount <= smirks.length) {
         hideAll();
         document.getElementById("smirkContainer").classList.remove("hidden");
@@ -225,7 +235,7 @@ function mePage() {
     hideAll();
     document.getElementById("yesPage").classList.remove("hidden");
     createFloating();
-    playMusic(m3);
+    playMusic(m3); // Switch to final love music
 }
 
 function virtualFlowers() { hideAll(); document.getElementById("flowers").classList.remove("hidden"); }
